@@ -1,9 +1,5 @@
+package pl.pej.asd.graph
 
-object HelloWorld {
-   def main(args: Array[String]) {
-      println("Hello, world!")
-   }
-}
 
 class NodeId(val id: Int) extends AnyVal
 // class VerticeId(val id: Int) extends AnyVal
