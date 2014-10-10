@@ -1,0 +1,33 @@
+*.class
+*.log
+
+# sbt specific
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.idea
+.idea_modules
+.scala_dependencies
+.settings
+.cache
+
+.classpath
+.project
+.target/
+
+# LaTeX
+*.aux
+*.gz
+*.toc
+*.bbl
+*.blg
+*.out
+*.nav
+*.snm
+doc/*.pdf
+prez/*.pdf
