@@ -1,19 +1,6 @@
 package pl.pej.asd.graph
 
-
-class NodeId(val id: Int) extends AnyVal
-// class VerticeId(val id: Int) extends AnyVal
-class Weight(val w: Int) extends AnyVal
-
-abstract class Node {
-    def id: NodeId
-}
-
-case class Vertice(from: NodeId, to: NodeId, v: Vertice)
-case class Vertice(weight: Weight)
-
-
-abstract class Graph {
+abstract class Graph[N <: Node] {
    
     def addNode(n: NodeId): Boolean
     def remNode(n: NodeId): Boolean
@@ -26,15 +13,16 @@ abstract class Graph {
     def verticesOut(n: NodeId): List[Vertice]
     def verticesIn(n: NodeId): List[Vertice]
    
-    def findNode(n: NodeId): Node
+    def findNode(n: NodeId): N
     def findVertice(a: NodeId, b: NodeId): Vertice
    
     def nodes: Int
     def vertices: Int
-   
+    def empty_? : Boolean = (nodes == 0) && (vertices == 0)
 }
 
 class MatrixGraph extends Graph {
+
    
     val rep: Array[Array[Option[Vertice]]] = scala.collection.mutable.Array.tabulate(100,100)(None)
    
