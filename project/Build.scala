@@ -4,13 +4,14 @@ import scala._
 
 object BuildSettings {
   val buildVersion = "0.1"
-  val buildScalaVersion = "2.11.2"
+  val buildScalaVersion = "2.11.4"
 
   val buildSettings = Defaults.defaultSettings ++ Seq(
     version := buildVersion,
     scalaVersion := buildScalaVersion,
     libraryDependencies ++= Dependencies.list,
-    resolvers ++= Resolvers.list
+    resolvers ++= Resolvers.list,
+    testOptions in Test += Tests.Argument("-oD")
   )
 
 }

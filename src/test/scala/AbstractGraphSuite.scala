@@ -1,7 +1,9 @@
 import org.scalatest.FunSuite
 import pl.pej.asd.graph._
 
-case object MockVerticeSpec extends VerticeSpec
+case object MockVerticeSpec extends VerticeSpec {
+  override def weight: Int = 0
+}
 case object MockNodeSpec extends NodeSpec
 
 abstract class AbstractGraphSuite(graph: () => Graph[MockNodeSpec.type, MockVerticeSpec.type]) extends FunSuite {
@@ -38,6 +40,29 @@ abstract class AbstractGraphSuite(graph: () => Graph[MockNodeSpec.type, MockVert
     assert(g.verticesOut(0) === List(Vertice(0,1, MockVerticeSpec)))
     assert(g.verticesOut(1) === Nil)
   }
+
+  test("graph with two nodes and a vertice return info corectly after inserting and removing nodes in meantime") {
+    val g = graph()
+
+    g.addNode(NodeId(0), MockNodeSpec)
+    g.addNode(NodeId(1), MockNodeSpec)
+    g.addNode(NodeId(2), MockNodeSpec)
+    g.addNode(NodeId(3), MockNodeSpec)
+
+    g.addVertice(2,3, MockVerticeSpec)
+
+    g.remNode(0)
+    g.remNode(1)
+
+    assert(g.areNeighbours(2, 3) === true)
+    assert(g.neighboursOf(2) === List(NodeId(3)))
+    assert(g.neighboursOf(3) === Nil)
+    assert(g.verticesIn(3) === List(Vertice(2, 3, MockVerticeSpec)))
+    assert(g.verticesIn(2) === Nil)
+    assert(g.verticesOut(2) === List(Vertice(2, 3, MockVerticeSpec)))
+    assert(g.verticesOut(3) === Nil)
+  }
+
 }
 
 
