@@ -6,41 +6,52 @@ import org.scalatest.time.SpanSugar._
 
 import scala.io.Source
 
-class AbstractPathSearchSuite extends FunSuite with TimeLimitedTests with BeforeAndAfter {
+abstract class AbstractPathSearchSuite(
+                               graphs: Map[String, () => Graph[EmptySpec.type , IntWeight]],
+                               searchAlgorithms: Map[String, (NodeId, NodeId, Graph[EmptySpec.type, IntWeight]) => (List[NodeId], Int)]
+                               ) extends FunSuite {
 
-  val timeLimit = 10.seconds
+  type TestGraph = Graph[EmptySpec.type, IntWeight]
+  val data = Source.fromURL(getClass.getResource("graph.txt")).getLines().toList
 
-  val listGraph = new ListGraph[EmptySpec.type , IntWeight]() with WarshalFloyd[EmptySpec.type, IntWeight]
-  val matrixGraph = new MatrixGraph[EmptySpec.type , IntWeight]() with WarshalFloyd[EmptySpec.type, IntWeight]
+  def loadData(graph: TestGraph): Unit = {
+    for{
+      i <- (0 until 1000).toList
+    } {
+      graph .addNode(NodeId(i), EmptySpec)
+    }
 
-  val data = Source.fromURL(getClass.getResource("graph.txt"))
-  for{
-    i <- (0 until 1000).toList
+    data.map { line =>
+      val Array(from, to, weight) = line.split("; ")
+
+      graph.addVertice(NodeId(from.toInt), NodeId(to.toInt), IntWeight(weight.toInt))
+    }
+  }
+
+  for {
+    (graphImplName, getGraph) <- graphs
+    (searchImplName, search) <- searchAlgorithms
   } {
-    listGraph.addNode(NodeId(i), EmptySpec)
-    matrixGraph.addNode(NodeId(i), EmptySpec)
-  }
+    test(s"$graphImplName on $searchImplName") {
+      val graph = getGraph()
+      loadData(graph)
+      val (path, dist) = search(NodeId(109), NodeId(609), graph)
 
-  data.getLines().toList.map { line =>
-    val Array(from, to, weight) = line.split("; ")
+      assert(path === List(109, 713, 870, 614, 808, 609).map(NodeId))
+      assert(dist === 18)
+    }
 
-    listGraph.addVertice(NodeId(from.toInt), NodeId(to.toInt), IntWeight(weight.toInt))
-    matrixGraph.addVertice(NodeId(from.toInt), NodeId(to.toInt), IntWeight(weight.toInt))
-  }
-
-  test("ListGraph WarshalFloyd") {
-
-
-    val (path, dist) = listGraph.warshalFloyd(NodeId(109), NodeId(609))
-
-    assert(path === List(109, 713, 870, 614, 808, 609).map(NodeId))
-  }
-
-  test("MatrixGraph WarshalFloyd") {
-
-    val (path, dist) = matrixGraph.warshalFloyd(NodeId(109), NodeId(609))
-
-    assert(path === List(109, 713, 870, 614, 808, 609).map(NodeId))
   }
 
 }
+
+
+class PathSearchSuite extends AbstractPathSearchSuite(
+  graphs = Map(
+    "MatrixGraph" -> (() => new MatrixGraph[EmptySpec.type, IntWeight]()),
+    "ListGraph" ->( () => new ListGraph[EmptySpec.type, IntWeight]())
+  ),
+  searchAlgorithms = Map(
+    "WarshalFloyd" -> WarshalFloyd.findshortestPath _
+  )
+)

@@ -10,7 +10,7 @@ import pl.pej.asd.graph.util.FullBitSetUtil
   * @tparam NS information, which each node holds
   * @tparam VS information which each vertice holds (usually some kind of weight)
   */
-class MatrixGraph[NS <: NodeSpec, VS <: VerticeSpec](arraySize: Int = 1100) extends Graph[NS,VS] with FullBitSetUtil {
+class MatrixGraph[NS <: NodeSpec, VS <: VerticeSpec](arraySize: Int = 2100) extends Graph[NS,VS] with FullBitSetUtil {
 
   protected val id2nodeMap: scala.collection.mutable.AbstractMap[NodeId, (Int, NS)] = scala.collection.mutable.HashMap()
 

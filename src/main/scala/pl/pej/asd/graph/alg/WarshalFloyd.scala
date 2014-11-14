@@ -3,13 +3,13 @@ package pl.pej.asd.graph.alg
 import pl.pej.asd.graph.{VerticeSpec, NodeSpec, NodeId, Graph}
 
 
-trait WarshalFloyd[NS <: NodeSpec, VS <: VerticeSpec] { this: Graph[NS, VS] =>
+object WarshalFloyd{
 
   import Graph._ //implicits
 
-  def warshalFloyd(from: NodeId, to: NodeId): (List[NodeId], Int) = {
+  def findshortestPath[NS<:NodeSpec, VS<:VerticeSpec](from: NodeId, to: NodeId, graph: Graph[NS,VS]): (List[NodeId], Int) = {
 
-    val size = this.nodeCount
+    val size = graph.nodeCount
     val indexes = (0 until size).toList
 
     val weights: Array[Array[Int]] = Array.fill(size,size)(Int.MaxValue/2)
@@ -18,7 +18,7 @@ trait WarshalFloyd[NS <: NodeSpec, VS <: VerticeSpec] { this: Graph[NS, VS] =>
     val paths: Array[Array[Int]] = Array.fill(size,size)(-1)
 
     for {
-      v <- vertices
+      v <- graph.vertices
     } {
       weights(v.from)(v.to) = v.spec.weight
       paths(v.from)(v.to) = v.from
