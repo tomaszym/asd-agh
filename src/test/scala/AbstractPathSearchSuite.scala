@@ -1,7 +1,7 @@
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import org.scalatest.concurrent.TimeLimitedTests
 import pl.pej.asd.graph._
-import pl.pej.asd.graph.alg.WarshalFloyd
+import pl.pej.asd.graph.alg.{FordBellman, WarshalFloyd}
 import org.scalatest.time.SpanSugar._
 
 import scala.io.Source
@@ -52,6 +52,7 @@ class PathSearchSuite extends AbstractPathSearchSuite(
     "ListGraph" ->( () => new ListGraph[EmptySpec.type, IntWeight]())
   ),
   searchAlgorithms = Map(
-    "WarshalFloyd" -> WarshalFloyd.findshortestPath _
+    "WarshalFloyd" -> WarshalFloyd.findshortestPath _ ,
+    "FordBellman" -> FordBellman.findshortestPath _
   )
 )
