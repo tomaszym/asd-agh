@@ -12,4 +12,20 @@ case class Flow(maxFlow: Int) extends VerticeSpec {
 
   var flow: Int = 0
   def flowBack = maxFlow - flow
+
+  def plus(i:Int): Int = {
+    val change = Math.min(i, maxFlow-flow)
+    
+    flow = flow+change
+
+    i-change
+  }
+
+  def minus(i: Int) {
+    val change = i - flow
+
+    flow = flow - i
+    if(flow < 0) throw new Exception(s"flow = $flow")
+  }
+
 }

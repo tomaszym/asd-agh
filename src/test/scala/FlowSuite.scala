@@ -1,5 +1,6 @@
 import org.scalatest.FunSuite
 import pl.pej.asd.graph._
+import pl.pej.asd.graph.alg.FordFulkerson
 import pl.pej.asd.graph.util.{ResidualVertice, ResidualNeighbour, FlowGraph}
 
 import scala.io.Source
@@ -10,9 +11,9 @@ class FlowSuite extends FunSuite {
 
 
   type TestGraph = Graph[EmptySpec.type, Flow] with FlowGraph[EmptySpec.type, Flow]
-  val data = Source.fromURL(getClass.getResource("graph.txt")).getLines().toList
 
-  def loadData(graph: TestGraph): Unit = {
+  def loadData(graph: TestGraph, filename: String): Unit = {
+    val data = Source.fromURL(getClass.getResource(filename)).getLines().toList
     for{
       i <- (0 until 1000).toList
     } {
@@ -44,6 +45,33 @@ class FlowSuite extends FunSuite {
 
     assert(FlowGraph.bfs(fg, 1,2) === List(ResidualVertice(1,2,2)))
     assert(FlowGraph.bfs(fg, 2,1) === List(ResidualVertice(2,1,3)))
+  }
+
+  test("Max flow in small graph: ListGraph") {
+
+    val fg = new ListGraph[EmptySpec.type, Flow]() with FlowGraph[EmptySpec.type, Flow]
+    loadData(fg, "small.txt")
+
+
+    assert(FordFulkerson.maxFlow(1,5, fg) === 18)
+
+  }
+  test("Max flow in test graph: ListGraph") {
+
+    val fg = new ListGraph[EmptySpec.type, Flow]() with FlowGraph[EmptySpec.type, Flow]
+    loadData(fg, "graph.txt")
+
+
+    assert(FordFulkerson.maxFlow(109,609, fg) === 9351)
+
+  }
+  test("Max flow in test graph: MatrixGraph") {
+
+    val fg = new MatrixGraph[EmptySpec.type, Flow]() with FlowGraph[EmptySpec.type, Flow]
+    loadData(fg, "graph.txt")
+
+
+    assert(FordFulkerson.maxFlow(109,609, fg) === 9351)
 
   }
 }
