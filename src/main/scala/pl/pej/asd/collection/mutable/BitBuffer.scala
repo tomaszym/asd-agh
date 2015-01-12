@@ -1,5 +1,7 @@
 package pl.pej.asd.collection.mutable
 
+import java.nio.ByteBuffer
+
 import scala.collection.generic.{GenericTraversableTemplate, Growable, CanBuildFrom}
 import scala.collection.{CustomParallelizable, mutable}
 import scala.collection.mutable.{ArrayBuffer, Buffer, BufferLike, Builder}
@@ -132,6 +134,17 @@ final class BitBuffer private (private var data: Array[Int], var length: Int) ex
   override def insertAll(n: Int, elems: Traversable[Boolean]): Unit = elems.foreach{ e => +=(e)}
 
   override def toString(): String = "BitBuffer" + iterator.mkString("(", ",", ")")
+
+  def dataAsByteArray: Array[Byte] = {
+
+
+    val buffer = ByteBuffer.allocate(data.size*4)
+
+    data.map { i =>
+      buffer.putInt(i)
+    }
+    buffer.array()
+  }
 }
 
 

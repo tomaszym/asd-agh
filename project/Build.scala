@@ -26,8 +26,9 @@ object Dependencies {
   lazy val scalaTest = "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
 
   lazy val rapture = Seq(
-    "com.propensive" %% "rapture-core" % "1.0.0",
-    "com.propensive" %% "rapture-io" % "0.10.0"
+    "com.propensive" %% "rapture-core" % "1.1.0",
+    "com.propensive" %% "rapture-io" % "0.10.0",
+    "com.propensive" %% "rapture-fs" % "0.10.0"
   )
 
   val logger = Seq(

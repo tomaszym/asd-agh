@@ -1,19 +1,43 @@
 package pl.pej.asd
 
 import java.io.File
+import java.io._
 
-import pl.pej.asd.huf.Huffman
+import pl.pej.asd.huf.{Huffman, FrequencyCount}
 
-import scala.io.Source
+import scala.io.{BufferedSource, Source}
+import rapture.io._
+import rapture.codec._
+import encodings.`UTF-8`
+import rapture.core._
+import rapture.fs._
 
 object Main {
    def main(args: Array[String]): Unit = {
 
+     args match {
+       case Array(sourcePath, destinationPath) =>
+
+         def source: BufferedSource = Source.fromURL(getClass.getResource("/seneca.txt"))
+         def raptureReader = ReaderBuilder.input(source.reader)
+         import InputBuilder._
 
 
-     val data = Source.fromURL(new File("/home/tomaszym/git/asd-agh/src/main/resources/seneca.txt").toURL).mkString + " "
+         val codeTree = Huffman.buildCodeTree(FrequencyCount(raptureReader))
 
-     Huffman.encode(data)
+         val res = Huffman.encode(codeTree,raptureReader)
+
+
+         val dst = new File("/home/tomaszym/git/asd-agh/senecaEncoded")
+         val writer = new BufferedOutputStream(new FileOutputStream(dst))
+
+         writer.write(res)
+
+       case _: Array[String] => println("Execute the programme with source path and destination path as it's arguments. Over. ")
+     }
+
+
+
 
    }
  }
