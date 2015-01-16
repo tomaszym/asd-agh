@@ -1,8 +1,19 @@
 package pl.pej.asd.huf
 
+import java.io.{BufferedReader, BufferedWriter}
+
 import rapture.io._
 
-case class FrequencyCount(freq: Map[String, Int], groupSize: Int)
+case class FrequencyCount(freq: Map[String, Int], groupSize: Int) {
+
+  def encode: String = {
+
+    groupSize.toString + "०" +
+    freq.map { case (chunk, count) =>
+      s"$chunk×$count"
+    }.mkString("०")
+  }
+}
 
 object FrequencyCount {
   def apply(in: Input[Char], groupSize: Int): FrequencyCount = {
@@ -48,5 +59,19 @@ object FrequencyCount {
     readN(groupSize, Nil)
 
     FrequencyCount(counts.toMap, groupSize)
+  }
+
+  def decode(encoded: String): FrequencyCount = {
+
+    val (groupSize, frequencies) = encoded.split("०").toList match {
+      case head::tail =>
+        val freq = tail.map(_.split("×").toList).map{ line =>
+          (line(0), Integer.parseInt(line(1)))
+        }.toMap
+
+        (Integer.parseInt(head), freq)
+    }
+
+    FrequencyCount(frequencies, groupSize)
   }
 }
