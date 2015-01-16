@@ -23,15 +23,22 @@ object Main {
          import InputBuilder._
 
 
-         val codeTree = Huffman.buildCodeTree(FrequencyCount(raptureReader))
+         val codeTree = Huffman.buildCodeTree(FrequencyCount(raptureReader,1))
 
-         val res = Huffman.encode(codeTree,raptureReader)
+         val res = Huffman.encode(codeTree,raptureReader,1)
 
 
          val dst = new File("/home/tomaszym/git/asd-agh/senecaEncoded")
          val writer = new BufferedOutputStream(new FileOutputStream(dst))
 
-         writer.write(res)
+         writer.write(res.dataAsByteArray)
+
+         val builder = StringBuilder.newBuilder
+
+         Huffman.decode(codeTree, res, builder)
+
+         println(builder.take(200))
+
 
        case _: Array[String] => println("Execute the programme with source path and destination path as it's arguments. Over. ")
      }

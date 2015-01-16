@@ -6,7 +6,7 @@ import scala.collection.generic.{GenericTraversableTemplate, Growable, CanBuildF
 import scala.collection.{CustomParallelizable, mutable}
 import scala.collection.mutable.{ArrayBuffer, Buffer, BufferLike, Builder}
 
-final class BitBuffer private (private var data: Array[Int], var length: Int) extends
+final class BitBuffer private (var data: Array[Int], var length: Int) extends
                                             mutable.AbstractSeq[Boolean] with
                                             mutable.Buffer[Boolean] with
                                             mutable.BufferLike[Boolean, BitBuffer] with
@@ -35,7 +35,7 @@ final class BitBuffer private (private var data: Array[Int], var length: Int) ex
     * @param idx index of an element in the collection
     * @return index of data chunk
     */
-  private def chunkIdx(idx: Int): Int = {
+   def chunkIdx(idx: Int): Int = {
     if(idx < 0 || idx >= length) throw new IndexOutOfBoundsException()
     (first + idx) / bits
   }
@@ -45,7 +45,7 @@ final class BitBuffer private (private var data: Array[Int], var length: Int) ex
     * @param idx
     * @return
     */
-  private def chunk(idx: Int): Int = data(chunkIdx(idx))
+  def chunk(idx: Int): Int = data(chunkIdx(idx))
 
   /** Creates Int with the mask on the bit
     *
@@ -91,11 +91,12 @@ final class BitBuffer private (private var data: Array[Int], var length: Int) ex
 
   override def +=(elem: Boolean): this.type = {
 
+    if(first == -1 ) first = 0
     if((first+length)/bits < dataSize) {
       length = length+1
       update(length-1, elem)
     } else {
-      moreSpace(0, 2)
+      moreSpace(0, 4)
       +=(elem)
     }
     this
@@ -126,14 +127,14 @@ final class BitBuffer private (private var data: Array[Int], var length: Int) ex
       length = length + 1
       update(0, elem)
     } else {
-      moreSpace(2, 0)
+      moreSpace(4, 0)
       +=:(elem)
     }
     this
   }
   override def insertAll(n: Int, elems: Traversable[Boolean]): Unit = elems.foreach{ e => +=(e)}
 
-  override def toString(): String = "BitBuffer" + iterator.mkString("(", ",", ")")
+  override def toString(): String = "BitBuffer" + iterator.map{v => if(v) 1 else 0}.mkString("(", ",", ")")
 
   def dataAsByteArray: Array[Byte] = {
 

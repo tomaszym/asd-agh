@@ -51,6 +51,11 @@ class BitBufferSuite extends FunSuite{
       b.+=:(true)
       assert(b(0) === true)
     }
+    for(i <- 0 until 40) {
+
+      println(s"ChunkIdx($i): ${b.chunkIdx(i)}")
+    }
+
   }
 
   test("A lot of elemets is added at the beginning and the end and the first and the last value are correct") {

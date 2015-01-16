@@ -27,7 +27,7 @@ object FrequencyCount {
       acc match {
         case list: List[Char] if list.size == n =>
 
-          val str = list.mkString
+          val str = list.mkString.reverse
           counts.update(str, counts.getOrElse(str,0)+1)
 
           in.read() match {
